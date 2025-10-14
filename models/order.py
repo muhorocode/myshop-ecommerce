@@ -1,8 +1,6 @@
 from sqlalchemy import Column,Integer,ForeignKey,DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from .base import Base
 import datetime
-
-Base=declarative_base()
 
 #the order model reps a cutomer order in the system
 class Order(Base):

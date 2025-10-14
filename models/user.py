@@ -1,8 +1,5 @@
 from sqlalchemy import Column,Integer,String
-from sqlalchemy.ext.declarative import declarative_base
-
-#create a base class for all the models to inherit from
-Base=declarative_base()
+from .base import Base #import the shared Base
 
 #the user model reps a user in the system
 class User(Base):
