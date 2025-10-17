@@ -10,6 +10,7 @@ A simple, beginner-friendly e-commerce backend built with Python, PostgreSQL, SQ
 - Manage Orders: Create, update, list, and delete orders
 - Manage Order Items: Add products to orders, update, list, and delete order items
 - All operations available via a simple CLI
+- Automated tests for all services (pytest)
 
 ---
 
@@ -18,6 +19,7 @@ A simple, beginner-friendly e-commerce backend built with Python, PostgreSQL, SQ
 - **PostgreSQL** (database)
 - **SQLAlchemy** (ORM)
 - **psycopg2** (PostgreSQL driver)
+- **pytest** (testing)
 - **Git** (feature branch workflow)
 
 ---
@@ -51,6 +53,12 @@ From the project root:
 python -m cli.myshop
 ```
 
+### 6. Run the Tests
+From the project root:
+```bash
+PYTHONPATH=. pytest -q
+```
+
 ---
 
 ## Example Usage
@@ -59,6 +67,7 @@ python -m cli.myshop
 - Create an order for a user
 - Add products to an order
 - Delete a user (must delete their orders first)
+- Run automated tests to verify all services
 
 All actions are menu-driven and beginner-friendly!
 
@@ -71,7 +80,7 @@ myshop-ecommerce/
 ├── db/                 # Database connection and setup
 ├── models/             # SQLAlchemy models
 ├── services/           # Business logic (CRUD services)
-├── tests/              # (To be added) Automated tests
+├── tests/              # Automated tests (pytest)
 ├── requirements.txt    # Python dependencies
 ├── README.md           # Project documentation
 ```
