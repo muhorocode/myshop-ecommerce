@@ -1,3 +1,63 @@
+from services.order_item_service import OrderItemService
+def list_order_items():
+    # Lists all order items, optionally filtered by order
+    order_id_input = input("Enter order id to filter (leave blank for all): ")
+    order_id = int(order_id_input) if order_id_input else None
+    with get_session() as session:
+        items = OrderItemService().list_order_items(session, order_id)
+        for item in items:
+            print(f"OrderItem {item.id}: Order {item.order_id}, Product {item.product_id}, Quantity {item.quantity}")
+
+def add_order_item():
+    # Adds a product to an order
+    try:
+        order_id = int(input("Enter order id: "))
+        product_id = int(input("Enter product id: "))
+        quantity = int(input("Enter quantity: "))
+    except ValueError:
+        print("Invalid input. Please enter numbers.")
+        return
+    with get_session() as session:
+        try:
+            item = OrderItemService().add_order_item(session, order_id, product_id, quantity)
+            session.commit()
+            print(f"OrderItem added: {item.id} (Order {item.order_id}, Product {item.product_id}, Quantity {item.quantity})")
+        except Exception as e:
+            print("Error adding order item:", e)
+
+def update_order_item():
+    # Updates an order item's product or quantity
+    try:
+        order_item_id = int(input("Enter order item id to update: "))
+    except ValueError:
+        print("Invalid order item id.")
+        return
+    product_id_input = input("Enter new product id (leave blank to keep current): ")
+    quantity_input = input("Enter new quantity (leave blank to keep current): ")
+    product_id = int(product_id_input) if product_id_input else None
+    quantity = int(quantity_input) if quantity_input else None
+    with get_session() as session:
+        try:
+            item = OrderItemService().update_order_item(session, order_item_id, product_id, quantity)
+            session.commit()
+            print(f"OrderItem updated: {item.id} (Order {item.order_id}, Product {item.product_id}, Quantity {item.quantity})")
+        except Exception as e:
+            print("Error updating order item:", e)
+
+def delete_order_item():
+    # Deletes an order item from the database
+    try:
+        order_item_id = int(input("Enter order item id to delete: "))
+    except ValueError:
+        print("Invalid order item id.")
+        return
+    with get_session() as session:
+        try:
+            OrderItemService().delete_order_item(session, order_item_id)
+            session.commit()
+            print("OrderItem deleted.")
+        except Exception as e:
+            print("Error deleting order item:", e)
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -200,6 +260,10 @@ def main_menu():
         print("11. Add a new order")
         print("12. Update an order")
         print("13. Delete an order")
+        print("14. List order items")
+        print("15. Add order item")
+        print("16. Update order item")
+        print("17. Delete order item")
         print("0. Exit")
         choice = input("> ")  # Get the user's menu choice
         if choice == "1":
@@ -228,6 +292,14 @@ def main_menu():
             update_order()
         elif choice == "13":
             delete_order()
+        elif choice == "14":
+            list_order_items()
+        elif choice == "15":
+            add_order_item()
+        elif choice == "16":
+            update_order_item()
+        elif choice == "17":
+            delete_order_item()
         elif choice == "0":
             print("Goodbye!")
             break
