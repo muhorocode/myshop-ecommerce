@@ -3,6 +3,57 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.product_service import ProductService
+from services.user_service import UserService
+def list_users():
+    # Lists all users in the database and prints their details
+    with get_session() as session:
+        users = UserService().list_users(session)
+        for u in users:
+            print(f"{u.id}: {u.username} - {u.email}")
+
+def create_user():
+    # Adds a new user to the database
+    username = input("Enter username: ")
+    email = input("Enter email: ")
+    with get_session() as session:
+        try:
+            user = UserService().create_user(session, username, email)
+            session.commit()
+            print(f"User created: {user.id}: {user.username}")
+        except Exception as e:
+            print("Error creating user:", e)
+
+def update_user():
+    # Updates an existing user's details
+    try:
+        user_id = int(input("Enter user id to update: "))
+    except ValueError:
+        print("Invalid user id.")
+        return
+    username = input("Enter new username (leave blank to keep current): ")
+    email = input("Enter new email (leave blank to keep current): ")
+    with get_session() as session:
+        try:
+            user = UserService().update_user(session, user_id, username or None, email or None)
+            session.commit()
+            print(f"User updated: {user.id}: {user.username}")
+        except Exception as e:
+            print("Error updating user:", e)
+
+def delete_user():
+    # Deletes a user from the database
+    try:
+        user_id = int(input("Enter user id to delete: "))
+    except ValueError:
+        print("Invalid user id.")
+        return
+    with get_session() as session:
+        try:
+            UserService().delete_user(session, user_id)
+            session.commit()
+            print("User deleted.")
+        except Exception as e:
+            print("Error deleting user:", e)
 from db.connection import get_session
 
 def list_products():
@@ -87,6 +138,10 @@ def main_menu():
         print("3. Add a new product")
         print("4. Update a product")
         print("5. Delete a product")
+        print("6. List all users")
+        print("7. Add a new user")
+        print("8. Update a user")
+        print("9. Delete a user")
         print("0. Exit")
         choice = input("> ")  # Get the user's menu choice
         if choice == "1":
@@ -99,6 +154,14 @@ def main_menu():
             update_product()
         elif choice == "5":
             delete_product()
+        elif choice == "6":
+            list_users()
+        elif choice == "7":
+            create_user()
+        elif choice == "8":
+            update_user()
+        elif choice == "9":
+            delete_user()
         elif choice == "0":
             print("Goodbye!")
             break
