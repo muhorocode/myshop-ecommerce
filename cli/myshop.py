@@ -3,6 +3,60 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.product_service import ProductService
+from services.order_service import OrderService
+def list_orders():
+    # Lists all orders in the database and prints their details
+    with get_session() as session:
+        orders = OrderService().list_orders(session)
+        for o in orders:
+            print(f"{o.id}: User {o.user_id} - Created at {o.created_at}")
+
+def create_order():
+    # Adds a new order for a user
+    try:
+        user_id = int(input("Enter user id for the order: "))
+    except ValueError:
+        print("Invalid user id.")
+        return
+    with get_session() as session:
+        try:
+            order = OrderService().create_order(session, user_id)
+            session.commit()
+            print(f"Order created: {order.id} for user {order.user_id}")
+        except Exception as e:
+            print("Error creating order:", e)
+
+def update_order():
+    # Updates an existing order's user_id
+    try:
+        order_id = int(input("Enter order id to update: "))
+    except ValueError:
+        print("Invalid order id.")
+        return
+    user_id_input = input("Enter new user id (leave blank to keep current): ")
+    user_id = int(user_id_input) if user_id_input else None
+    with get_session() as session:
+        try:
+            order = OrderService().update_order(session, order_id, user_id)
+            session.commit()
+            print(f"Order updated: {order.id} for user {order.user_id}")
+        except Exception as e:
+            print("Error updating order:", e)
+
+def delete_order():
+    # Deletes an order from the database
+    try:
+        order_id = int(input("Enter order id to delete: "))
+    except ValueError:
+        print("Invalid order id.")
+        return
+    with get_session() as session:
+        try:
+            OrderService().delete_order(session, order_id)
+            session.commit()
+            print("Order deleted.")
+        except Exception as e:
+            print("Error deleting order:", e)
 from services.user_service import UserService
 def list_users():
     # Lists all users in the database and prints their details
@@ -142,6 +196,10 @@ def main_menu():
         print("7. Add a new user")
         print("8. Update a user")
         print("9. Delete a user")
+        print("10. List all orders")
+        print("11. Add a new order")
+        print("12. Update an order")
+        print("13. Delete an order")
         print("0. Exit")
         choice = input("> ")  # Get the user's menu choice
         if choice == "1":
@@ -162,6 +220,14 @@ def main_menu():
             update_user()
         elif choice == "9":
             delete_user()
+        elif choice == "10":
+            list_orders()
+        elif choice == "11":
+            create_order()
+        elif choice == "12":
+            update_order()
+        elif choice == "13":
+            delete_order()
         elif choice == "0":
             print("Goodbye!")
             break
